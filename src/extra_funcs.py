@@ -10,17 +10,21 @@ def open_file(user_input : str, e_ : int) -> str:
         print("Error: Invalid file path!")
     else:
         try:
-            if (e_ == 1): acc = 'rt'
-            if (e_ == 2): acc = 'rb'
-            
-            with open(file_path, f"{acc}") as file:
-                content = file.read()
-                
-            return content
+            if e_ == 1:
+                with open(file_path, 'rt', encoding='cp1251') as file:
+                    content = file.read()
+                return content
+            elif e_ == 2:
+                with open(file_path, 'rb') as file:
+                    content = file.read()
+                return content
+            else:
+                print("Error: Invalid mode!")
         except FileNotFoundError:
             print("Error: File not found!")
-        except IOError:
+        except Exception:
             print("Error: Could not read file!")
+
 
 def add_paddings(arr : list) -> list:
     res = arr
