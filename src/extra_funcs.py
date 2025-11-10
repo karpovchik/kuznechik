@@ -1,5 +1,10 @@
 import modules
 
+def display(text : list):
+    for block in text:
+        for i in block:
+            print(i[2:], end='')
+
 def open_file(user_input : str, e_ : int) -> str:
     base_dir = modules.path.abspath("../files")         # define base dir
 

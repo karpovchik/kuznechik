@@ -3,7 +3,7 @@ import kuz
 
 extra_funcs.modules.system("cls")
 
-while (1):
+while (1):    
     res = ""
     plain_text = []
     hex_arr = []
@@ -59,22 +59,36 @@ while (1):
     text_len = len(hex_arr)
     hex_arr = extra_funcs.add_paddings(hex_arr)           # add paddings and convert to hexadecimal repr
     paddings = len(hex_arr) - text_len
-    print(paddings)
 
     # select 16-byte blocks
     hex_arr = [ list(hex_arr[i : i + 16]) for i in range(0, len(hex_arr), 16)]
-    print(f"<<< Plain text >>>\n{s}\n{hex_arr}")
+    print()
+    print("="*190)
+    print("\t\t\t\t\t\t\t\t\t<<< Plain text before encryption >>>")
+    print("="*190)
+    print(f"\n{s}\n")
+    extra_funcs.display(hex_arr)
     print()
 
-    print("<<< Cypher text (HEX representaition) >>>")
+    print()
+    print("="*190)
+    print("\t\t\t\t\t\t\t\t\t<<< Cypher text in HEX representation >>>")
+    print("="*190)
+    print()
     for block in hex_arr:
         cypher_text.append(kuz.E(block, RND_KEYS))
-    print(cypher_text)
-
-    print("\n<<< Initial plain text (HEX representation) >>>")
+    extra_funcs.display(cypher_text)
+    print()
+    
+    print()
+    print("="*190)
+    print("\t\t\t\t\t\t\t\t\t<<< Initial plain text before encryption >>>")
+    print("="*190)
+    print()
     for block in cypher_text:
         plain_text.append(kuz.D(block, RND_KEYS))
-    print(plain_text)
+    extra_funcs.display(plain_text)
+    print()
 
     plain_text = extra_funcs.del_paddings(plain_text, paddings)                 # delete paddings
 
@@ -84,5 +98,9 @@ while (1):
             if (len(tmp) == 1): tmp = "0" + tmp
             res += tmp
 
-    print("\n<<< Initial plain text (TEXT representation) >>>")
+    print()
     print(bytearray.fromhex(res).decode('cp1251'))
+
+    extra_funcs.modules.sleep(16)
+    extra_funcs.modules.system("clear")
+
