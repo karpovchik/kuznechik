@@ -1,18 +1,14 @@
-# def E():  <- encryption                           (+)
-#
-# def X():  <- xor operation                        (+)
-# 
-# def S();  <- nonlinear convertion                 (+)
-# 
-# def L():  <- linear convertion                    (+)
-# 
-# def K():  <- Festel function (form round keys)    (+)
-# 
-# def F():  <- a step to form round key             (+)
-#
-# def D():  <- decryption                           (+)
-# 
+# In this "Kuznechik" algorithm is implemented
 
+# def E():  <- encryption                           (+)
+# def X():  <- xor operation                        (+)
+# def S();  <- nonlinear convertion                 (+)
+# def L():  <- linear convertion                    (+)
+# def K():  <- Festel function (form round keys)    (+)
+# def F():  <- a step to form round key             (+)
+# def D():  <- decryption                           (+)
+
+# Pi table -> is used for nonlinear convertion (makes a confusion effect)
 Pi = [
     [0xFC, 0xEE, 0xDD, 0x11, 0xCF, 0x6E, 0x31, 0x16, 0xFB, 0xC4, 0xFA, 0xDA, 0x23, 0xC5, 0x04, 0x4D],
     [0xE9, 0x77, 0xF0, 0xDB, 0x93, 0x2E, 0x99, 0xBA, 0x17, 0x36, 0xF1, 0xBB, 0x14, 0xCD, 0x5F, 0xC1],
@@ -32,6 +28,7 @@ Pi = [
     [0x59, 0xA6, 0x74, 0xD2, 0xE6, 0xF4, 0xB4, 0xC0, 0xD1, 0x66, 0xAF, 0xC2, 0x39, 0x4B, 0x63, 0xB6]
 ]
 
+# Reverse table to Pi
 Pi_reverse = [
     [0xA5, 0x2D, 0x32, 0x8F, 0x0E, 0x30, 0x38, 0xC0, 0x54, 0xE6, 0x9E, 0x39, 0x55, 0x7E, 0x52, 0x91],
     [0x64, 0x03, 0x57, 0x5A, 0x1C, 0x60, 0x07, 0x18, 0x21, 0x72, 0xA8, 0xD1, 0x29, 0xC6, 0xA4, 0x3F],
@@ -51,14 +48,18 @@ Pi_reverse = [
     [0x12, 0x1A, 0x48, 0x68, 0xF5, 0x81, 0x8B, 0xC7, 0xD6, 0x20, 0x0A, 0x08, 0x00, 0x4C, 0xD7, 0x74]
 ]
 
+# A vector used in linear convetion
 L_vector = [ 0x94, 0x20, 0x85, 0x10, 0xC2, 0xC0, 0x01, 0xFB, 0x01, 0xC0, 0xC2, 0x10, 0x85, 0x20, 0x94, 0x01 ]
 
+# Exponential table of GF(2^8)
 Exp_table = [0]*510
 
+# Logarithmic table of GF(2^8)
 Log_table = [-1]*256
 
+# Generating Exp and Log tables
 def GF256_Generate_Table():
-    P = 0x1C3           # irReducible polynomial x^8 + x^7 + x^6 + x + 1
+    P = 0x1C3           # irreducible polynomial x^8 + x^7 + x^6 + x + 1
 
     x = 1
     for i in range(255):
@@ -74,12 +75,14 @@ def GF256_Generate_Table():
     for i in range(255, 510):
         Exp_table[i] = Exp_table[i - 255]     # 255 is a number of nonzero elements
 
-def GF256_MUL(a : int, b : int) -> int:
-    if (a == 0 or b == 0):
+# Realization of multiplication
+def GF256_MUL(num1 : int, num2 : int) -> int:
+    if (num1 == 0 or num2 == 0):
         return 0
     else:
-        return Exp_table[Log_table[a] + Log_table[b]]
-    
+        return Exp_table[Log_table[num1] + Log_table[num2]]     # Log table contains 
+
+# XOR 
 def X(block1 : list, block2 : list) -> list:
     res = []
     for i in range(16):
@@ -87,6 +90,7 @@ def X(block1 : list, block2 : list) -> list:
 
     return res
 
+# Implementation of nonlinear convertion 
 def S(block : list) -> list:
     res = []
     for byte in block:
@@ -100,6 +104,7 @@ def S(block : list) -> list:
     
     return res
 
+# Reverse nonlinear convertion
 def S_reverse(block : list) -> list:
     res = []
     for byte in block:
@@ -113,6 +118,7 @@ def S_reverse(block : list) -> list:
 
     return res
 
+# Implementation of linear convertion
 def L(block : list) -> list:
     res = block
 
@@ -128,7 +134,9 @@ def L(block : list) -> list:
     
     return res
 
+# Reverse implementation of linear convertion 
 def L_reverse(block : list) -> list:
+# Here we calculate a previous last value
     res = block
 
     for i in range(16):
@@ -137,6 +145,8 @@ def L_reverse(block : list) -> list:
             byte = res[j + 1]
             gf_mul = GF256_MUL(int(byte[2:], 16), L_vector[j])      # iterative multiplication_
             acc ^= gf_mul                                           # accumulator - new byte_
+
+# A previous element is calculated using a formula : (A0 - ∑(Aj * B(j-1))) / B[15] ; 1<=j<=15
         acc = int(res[0][2:], 16)^acc                               # calculate previous last value
         for i in range(L_vector[-1] - 1):
             acc -= L_vector[-1]
@@ -152,6 +162,7 @@ def F(rnd_key : list, c : list) -> list:
 
     return res
 
+# Generate round keys using Fiestel Network
 def K(key : list) -> list:
     RND_KEYS = []
     Lkey = key[0 : len(key) // 2]               # round key 1
@@ -181,6 +192,7 @@ def K(key : list) -> list:
     
     return RND_KEYS
 
+# Encryption
 def E(b : list, k : list) -> list:
     block = b
 
@@ -189,6 +201,7 @@ def E(b : list, k : list) -> list:
 
     return X(block, k[-1])
 
+# Decryption
 def D(b : list, k : list) -> list:
     block = b
 

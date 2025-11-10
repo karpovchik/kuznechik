@@ -1,10 +1,14 @@
+# This file is used to contain some useful (extra) functions
+
 import modules
 
+# Display text in hexadecimal representation
 def display(text : list):
     for block in text:
         for i in block:
             print(i[2:], end='')
 
+# Function to open a file, can open in two modes
 def open_file(user_input : str, e_ : int) -> str:
     base_dir = modules.path.abspath("../files")         # define base dir
 
@@ -30,7 +34,7 @@ def open_file(user_input : str, e_ : int) -> str:
         except Exception:
             print("Error: Could not read file!")
 
-
+# Add paddings following the PKCS#7 standard
 def add_paddings(arr : list) -> list:
     res = arr
     L = len(arr) % 16
@@ -45,6 +49,7 @@ def add_paddings(arr : list) -> list:
 
     return res
 
+# Delete paddings
 def del_paddings(arr : list, padd_len : int) -> list:
     if (padd_len == 16): arr.pop()
     else:
