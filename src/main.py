@@ -1,7 +1,7 @@
 import extra_funcs
 import kuz
 
-extra_funcs.modules.system("cls")
+extra_funcs.modules.system("clear")
 
 while (1):    
     res = ""
@@ -82,7 +82,7 @@ while (1):
     
     print()
     print("="*190)
-    print("\t\t\t\t\t\t\t\t\t<<< Initial plain text before encryption >>>")
+    print("\t\t\t\t\t\t\t\t\t<<< Initial plain text after decryption >>>")
     print("="*190)
     print()
     for block in cypher_text:

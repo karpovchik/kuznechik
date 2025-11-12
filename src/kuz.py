@@ -104,20 +104,6 @@ def S(block : list) -> list:
     
     return res
 
-# Reverse nonlinear convertion
-def S_reverse(block : list) -> list:
-    res = []
-    for byte in block:
-        byte = byte[2:]
-        if (len(byte) == 1) : byte = f"0{byte}"
-        big_nibble = int(byte[0], 16)           
-        lil_nibble = int(byte[1], 16)
-
-        new_byte = Pi_reverse[big_nibble][lil_nibble]    # get a new byte from 'Pi' matrix
-        res.append(hex(new_byte))
-
-    return res
-
 # Implementation of linear convertion
 def L(block : list) -> list:
     res = block
@@ -132,6 +118,20 @@ def L(block : list) -> list:
         res.insert(0, hex(acc))
         res.pop()
     
+    return res
+
+# Reverse nonlinear convertion
+def S_reverse(block : list) -> list:
+    res = []
+    for byte in block:
+        byte = byte[2:]
+        if (len(byte) == 1) : byte = f"0{byte}"
+        big_nibble = int(byte[0], 16)           
+        lil_nibble = int(byte[1], 16)
+
+        new_byte = Pi_reverse[big_nibble][lil_nibble]    # get a new byte from 'Pi' matrix
+        res.append(hex(new_byte))
+
     return res
 
 # Reverse implementation of linear convertion 
